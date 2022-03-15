@@ -1,2 +1,2 @@
 # MyNotes
-Note application for iOS made with React Native.
+Mobile note application made with React Native.
