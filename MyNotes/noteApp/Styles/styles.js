@@ -19,13 +19,29 @@ export default StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center'
     },
-    modal_view: {
+    category_modal: {
       width: "80%",
       paddingTop: 20,
       paddingBottom: 20,
       borderRadius: 25,
       backgroundColor: '#ffefd9',
       alignItems: 'center',
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5
+    },
+    settings_modal: {
+      width: "100%",
+      height: "50%",
+      backgroundColor: '#ffefd9',
+      padding: 20,
+      borderTopLeftRadius: 25,
+      borderTopRightRadius: 25,
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -70,7 +86,7 @@ export default StyleSheet.create({
     circle: {
       height: 70,
       width: 70,
-      backgroundColor: '#9e414a',
+      backgroundColor: text_color_2,
       borderRadius: 35,
       justifyContent: 'center',
       alignItems: 'center'
@@ -89,11 +105,76 @@ export default StyleSheet.create({
       backgroundColor: background_color,
       position: 'absolute'
     },
+    settings_container: {
+      position: "absolute",
+      bottom: -190,
+      width: "100%",
+      height: 750,
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    settings_button: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      backgroundColor: background_color,
+      borderWidth: 3,
+      borderColor: text_color_2,
+      margin: 0,
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+      flex: 1,
+    },
+    small_dot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: text_color_2,
+      margin: 1
+    },
+    settings_button_position: {
+      position: "absolute",
+      top: 0,
+      right: -60
+    },
+    close_settings_button: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      borderWidth: 3,
+      borderColor: text_color_2,
+      backgroundColor: '#ffefd9',
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    settings_close_button_position: {
+      position: "absolute",
+      top: 15,
+      right: 15
+    },
+    small_eclipse_left: {
+      width: "75%",
+      height: "10%",
+      backgroundColor: text_color_2,
+      borderRadius: 5,
+      transform: [{rotate: "45deg"}],
+      position: "absolute"
+    },
+    small_eclipse_right: {
+      width: "75%",
+      height: "10%",
+      backgroundColor: text_color_2,
+      borderRadius: 5,
+      transform: [{rotate: "135deg"}],
+      position: "absolute"
+    },
   
     // STYLING FOR ALL THE INPUTS
     new_category_input: {
       padding: 10,
       fontSize: 25,
+      color: text_color_1,
       fontWeight: '800',
       width: "85%",
       textAlign: 'center',
@@ -102,7 +183,7 @@ export default StyleSheet.create({
       backgroundColor: background_color,
       borderRadius: 20,
       borderWidth: 1,
-      borderColor: "#cfcfcf"
+      borderColor: background_color
     },
   
     // STYLING FOR ALL THE TEXTS
