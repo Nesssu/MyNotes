@@ -36,12 +36,12 @@ export default StyleSheet.create({
       elevation: 5
     },
     settings_modal: {
-      width: "100%",
+      width: "95%",
       height: "50%",
+      bottom: 0,
       backgroundColor: '#ffefd9',
       padding: 20,
-      borderTopLeftRadius: 25,
-      borderTopRightRadius: 25,
+      borderRadius: 25,
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -107,9 +107,9 @@ export default StyleSheet.create({
     },
     settings_container: {
       position: "absolute",
-      bottom: -190,
+      bottom: 0,
       width: "100%",
-      height: 750,
+      height: "90%",
       justifyContent: "center",
       alignItems: "center"
     },
@@ -138,7 +138,7 @@ export default StyleSheet.create({
       top: 0,
       right: -60
     },
-    close_settings_button: {
+    close_category_button: {
       width: 30,
       height: 30,
       borderRadius: 15,
@@ -148,7 +148,7 @@ export default StyleSheet.create({
       alignItems: "center",
       justifyContent: "center"
     },
-    settings_close_button_position: {
+    category_close_button_position: {
       position: "absolute",
       top: 15,
       right: 15
@@ -169,7 +169,6 @@ export default StyleSheet.create({
       transform: [{rotate: "135deg"}],
       position: "absolute"
     },
-  
     // STYLING FOR ALL THE INPUTS
     new_category_input: {
       padding: 10,
@@ -178,7 +177,7 @@ export default StyleSheet.create({
       fontWeight: '800',
       width: "85%",
       textAlign: 'center',
-      marginTop: 20,
+      marginTop: 40,
       marginBottom: 30,
       backgroundColor: background_color,
       borderRadius: 20,
@@ -213,4 +212,3 @@ export default StyleSheet.create({
       color: text_color_1,
     },
 });
-  
