@@ -169,6 +169,40 @@ export default StyleSheet.create({
       transform: [{rotate: "135deg"}],
       position: "absolute"
     },
+    settings_header: {
+      flex: 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: "100%",
+      height: "100%"
+    },
+    settings_main: {
+      flex: 8,
+      width: "100%",
+      height: "100%"
+    },
+    back_to_home_button: {
+      position: "absolute",
+      top: 5,
+      left: 20,
+    },
+    notes_header: {
+      flex: 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: "100%",
+    },
+    notes_main: {
+      flex: 6,
+      width: "100%",
+
+    },
+    notes_footer: {
+      flex: 2,
+      width: "100%",
+      
+    },
+
     // STYLING FOR ALL THE INPUTS
     new_category_input: {
       padding: 10,
@@ -210,5 +244,10 @@ export default StyleSheet.create({
       fontSize: 60,
       fontWeight: '700',
       color: text_color_1,
+    },
+    go_back_text: {
+      color: text_color_1,
+      fontSize: 25,
+      fontWeight: '600'
     },
 });

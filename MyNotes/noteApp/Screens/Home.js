@@ -5,16 +5,24 @@ import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInpu
 import styles from '../Styles/styles.js';
 
 // Subview that shows the already made categories and how many notes are in those categories
-const NoteCategory = ({title, amount}) => (
-    <View style={styles.notes_area}>
-        <View style={styles.title_area}>
-        <Text style={styles.notes_title}>{title}</Text>
-        </View>
-        <View style={styles.amount_area}>
-        <Text style={styles.notes_amount}>{amount}</Text>
-        </View>
-    </View>
-);
+function NoteCategory(props) {
+    const categories = props.categories;
+    const listItems = categories.map((data) => 
+        <TouchableOpacity key={data[0]} onPress={ () => props.navigation.navigate("Notes", {category: data[1]})}>
+            <View style={styles.notes_area}>
+                <View style={styles.title_area}>
+                    <Text style={styles.notes_title}>{data[1]}</Text>
+                </View>
+                <View style={styles.amount_area}>
+                    <Text style={styles.notes_amount}>{data[2]}</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
+    return (
+        <View>{listItems}</View>
+    );
+}
 
 // Modal that allows the user to create a new category
 const NewCategory = ({onChangeCategory, category, setAddNewCategory}) => (
@@ -48,6 +56,7 @@ const NewCategory = ({onChangeCategory, category, setAddNewCategory}) => (
 export default function Home({navigation}) {  
     const [addNewCategory, setAddNewCategory] = React.useState(false)
     const [category, onChangeCategory] = React.useState(null);
+    const categories = [[1, "Personal", "8"], [2, "Work", "4"], [3, "Ideas", "3"]];
 
     return (
         <SafeAreaView style={styles.container}>
@@ -67,18 +76,7 @@ export default function Home({navigation}) {
             </View>
             <View style={styles.main_area}>
                 <ScrollView>
-                    <TouchableOpacity>
-                    <NoteCategory title="Personal" amount="6"/>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                    <NoteCategory title="Work" amount="14"/>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                    <NoteCategory title="Ideas" amount="9"/>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                    <NoteCategory title="Lists" amount="3"/>
-                    </TouchableOpacity>
+                    <NoteCategory categories={categories} navigation={navigation}/>
                 </ScrollView>
             </View>
             <Modal
