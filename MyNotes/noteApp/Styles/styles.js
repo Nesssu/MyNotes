@@ -193,14 +193,45 @@ export default StyleSheet.create({
       width: "100%",
     },
     notes_main: {
-      flex: 6,
+      flex: 7,
       width: "100%",
-
+      alignItems: "center",
     },
     notes_footer: {
-      flex: 2,
+      flex: 1,
       width: "100%",
-      
+      flexDirection: "row",
+
+    },
+    notes_add_button_area: {
+      flex: 1,
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    notes_delete_button_area: {
+      flex: 1,
+      width: "100%",
+      height: "100%",
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    note_background: {
+      width: "80%",
+      padding: 10,
+      paddingBottom: 30,
+      margin: 10,
+      backgroundColor: "#ffefd9",
+      borderRadius: 15,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5
     },
 
     // STYLING FOR ALL THE INPUTS
@@ -250,4 +281,27 @@ export default StyleSheet.create({
       fontSize: 25,
       fontWeight: '600'
     },
+    notes_add_button: {
+      fontSize: 30,
+      fontWeight: '700',
+      color: text_color_1,
+    },
+    notes_delete_button: {
+      fontSize: 30,
+      fontWeight: '700',
+      color: text_color_1,
+    },
+    notes_text: {
+      fontSize: 25,
+      color: text_color_2,
+      fontWeight: '600',
+    },
+    notes_date: {
+      fontSize: 14,
+      color: text_color_2,
+      fontWeight: '400',
+      position: "absolute",
+      bottom: 8,
+      left: 8
+    }
 });
