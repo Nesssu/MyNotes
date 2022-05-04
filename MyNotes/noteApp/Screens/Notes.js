@@ -8,7 +8,23 @@ const Note = (props) => (
     </View>
 );
 
+function AllNotes(props) {
+    const notes = props.notes;
+    const listItems = notes.map((data) => 
+        <Note key={data[0]} note={data[1]} time={data[2]} />
+    );
+    return (
+        <View>{listItems}</View>
+    );
+}
+
 export default function Notes(props) {
+    // props will have the id of the category
+    // TODO: Get all the note data from database
+    const page_id = props.route.params.page_id;
+    
+
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.notes_header}>

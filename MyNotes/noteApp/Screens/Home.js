@@ -3,12 +3,16 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInput } from 'react-native';
 import styles from '../Styles/styles.js';
+import { openDatabase} from 'react-native-sqlite-storage';
+
+// Opening the database
+const db = openDatabase({name: 'mynotes.db', location: '../Databases/mynotes.db'});
 
 // Subview that shows the already made categories and how many notes are in those categories
 function NoteCategory(props) {
     const categories = props.categories;
     const listItems = categories.map((data) => 
-        <TouchableOpacity key={data[0]} onPress={ () => props.navigation.navigate("Notes", {category: data[1]})}>
+        <TouchableOpacity key={data[0]} onPress={ () => props.navigation.navigate("Notes", {category: data[1], page_id: data[0]})}>
             <View style={styles.notes_area}>
                 <View style={styles.title_area}>
                     <Text style={styles.notes_title}>{data[1]}</Text>
@@ -56,7 +60,8 @@ const NewCategory = ({onChangeCategory, category, setAddNewCategory}) => (
 export default function Home({navigation}) {  
     const [addNewCategory, setAddNewCategory] = React.useState(false)
     const [category, onChangeCategory] = React.useState(null);
-    const categories = [[1, "Personal", "8"], [2, "Work", "4"], [3, "Ideas", "3"]];
+    const categories = [[1, "Personal", 8], [2, "Work", 4], [3, "Ideas", 3]];
+
 
     return (
         <SafeAreaView style={styles.container}>
