@@ -3,10 +3,11 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInput } from 'react-native';
 import styles from '../Styles/styles.js';
-import { openDatabase} from 'react-native-sqlite-storage';
+import * as SQLite from 'expo-sqlite';
 
-// Opening the database
-const db = openDatabase({name: 'mynotes.db', location: '../Databases/mynotes.db'});
+// Connectiong to the database
+
+
 
 // Subview that shows the already made categories and how many notes are in those categories
 function NoteCategory(props) {
