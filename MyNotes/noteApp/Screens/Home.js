@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInput } from 'react-native';
 import styles from '../Styles/styles.js';
-import * as DB from '../Utilities/database';
+import * as database from '../Utilities/database';
 
 // Subview that shows the already made categories and how many notes are in those categories
 function NoteCategory(props) {
@@ -57,9 +57,9 @@ const NewCategory = ({onChangeCategory, category, setAddNewCategory}) => (
 export default function Home({navigation}) {
     const [addNewCategory, setAddNewCategory] = React.useState(false)
     const [category, onChangeCategory] = React.useState(null);
-    const categories = [[1, "Personal", 8], [2, "Work", 4], [3, "Ideas", 3]];
-
-    const test = DB.getCategories();
+    const categories = [[1, "Movies", 0]];
+    const categoriesTest = database.getCategories();
+    console.log(categoriesTest);
 
     return (
         <SafeAreaView style={styles.container}>
