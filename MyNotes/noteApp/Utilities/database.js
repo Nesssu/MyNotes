@@ -1,9 +1,9 @@
 import * as SQLite from 'expo-sqlite';
-import React, { useEffect } from 'react';
+import React, { Component, useEffect } from 'react';
 
-const database = SQLite.openDatabase("mynotes.db");
+const db = SQLite.openDatabase("mynotes.db");
 
-database.transaction(tx => {
+db.transaction(tx => {
     tx.executeSql(
         `CREATE TABLE IF NOT EXISTS "Categories" (
         "ID"	INTEGER NOT NULL UNIQUE,
@@ -37,60 +37,76 @@ database.transaction(tx => {
     )
 });
 
+export default class DatabaseClass extends Component {
 
-  
+  static instance = null;
+  static getInstance() {
+    if (this.instance == null) {
+      this.instance = new DatabaseClass();
+    }
+    return this.instance;
+  }
+  constructor() {
+    super();
+    this.state = {
+      categories: [],
+    }
+  }
 
-export const getCategories = async () => {
-    const [categoryData, setCategoryData] = React.useState([]);
-    useEffect(() => {
-      database.transaction(
-          tx => {
-            tx.executeSql(
-              `SELECT * FROM Categories;`,
-              [],
-              (tx, results) => {
-                var temp = [];
-                for (var i = 0; i < results.rows.length; i++) {
-                  temp.push(results.rows.item(i));
-                }
-                setCategoryData(temp);
-              },
-              (tx, error) => {
-                console.log("Could not execute query: " + error);
-              }
-            );
-          },
-          error => {
-            console.log("Transaction error: " + error);
-          },
-          () => {
+  componentWillMount() {
+    this.SelectQuery = this.SelectQuery.bind(this);
+  }
+
+  ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
+    db.transaction((trans) => {
+      trans.executeSql(sql, params, (trans, results) => {
+        resolve(results);
+      },
+        (error) => {
+          reject(error);
         });
-    }, []);
-    return categoryData;
-};
+    });
+  });
 
-export const insertNewCategory = (categoryName) => {
-  database.transaction(function(tx) {
-    tx.executeSql(`INSERT INTO Categories ("Name", "Amount") VALUES(?, 0)`, [categoryName], null);
-  })
-};
+  async SelectQuery() {
+    let selectQuery = await this.ExecuteQuery("SELECT * FROM Categories",[]);
+    var rows = selectQuery.rows;
+    for (let i = 0; i < rows.length; i++) {
+      this.setState({categories: [...this.state.categories, rows.item(i)]});
+    }
+  }
 
-export const insertNewNote = (note, id) => {
-  database.transaction(function(tx) {
-    tx.executeSql(`INSERT INTO Notes ("FK_ID", "Note", "Time") VALUES (?, ?, DATETIME())`, [id, note], null);
-  })
-};
+  getCategories() {
+    this.SelectQuery();
+    console.log(this.state.categories);
+  }
 
-export const deleteCategory = (id) => {
-  database.transaction(function(tx) {
-    tx.executeSql(`DELETE FROM Categories WHERE ID = ?`, [id], null);
-  })
-};
+  emptyState() {
+    this.setState({categories: []});
+  }
 
-export const deleteNote = (id) => {
-  database.transaction(function(tx) {
-    tx.executeSql(`DELETE FROM Notes WHERE ID = ?`, [id], null);
-  })
-};
+  insertNewCategory = (categoryName) => {
+    db.transaction(function(tx) {
+      tx.executeSql(`INSERT INTO Categories ("Name", "Amount") VALUES(?, 0)`, [categoryName], null);
+    })
+  };
 
+  insertNewNote = (note, id) => {
+    db.transaction(function(tx) {
+      tx.executeSql(`INSERT INTO Notes ("FK_ID", "Note", "Time") VALUES (?, ?, DATETIME())`, [id, note], null);
+    })
+  };
 
+  deleteCategory = (id) => {
+    db.transaction(function(tx) {
+      tx.executeSql(`DELETE FROM Categories WHERE ID = ?`, [id], null);
+    })
+  };
+
+  deleteNote = (id) => {
+    db.transaction(function(tx) {
+      tx.executeSql(`DELETE FROM Notes WHERE ID = ?`, [id], null);
+    })
+  };
+
+}

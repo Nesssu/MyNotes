@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInput } from 'react-native';
 import styles from '../Styles/styles.js';
-import * as database from '../Utilities/database';
+import DatabaseClass from '../Utilities/database';
 
 // Subview that shows the already made categories and how many notes are in those categories
 function NoteCategory(props) {
@@ -21,16 +21,21 @@ function NoteCategory(props) {
         </TouchableOpacity>
     );
     return (
-        <View>{listItems}</View>
+        <View>{listItems.length ? listItems : <Text style={{fontSize: 30,
+                                                            fontWeight: '200',
+                                                            color: "grey",
+                                                            fontStyle: "italic",
+                                                            top: 200
+                                                            }}>ADD NEW CATEGORIES</Text>}</View>
     );
 }
 
 // Modal that allows the user to create a new category
-const NewCategory = ({onChangeCategory, category, setAddNewCategory}) => (
+const NewCategory = ({onChangeCategory, category, setAddNewCategory, insertNewCategory}) => (
     <View style={styles.new_category_container}>
         <View style={styles.category_modal}>
             <View style={styles.category_close_button_position}>
-                <TouchableOpacity onPress={() => {setAddNewCategory(false); }}>
+                <TouchableOpacity onPress={() => {setAddNewCategory(false);  onChangeCategory("");}}>
                     <View style={styles.close_category_button}>
                         <View style={styles.small_eclipse_left}/>
                         <View style={styles.small_eclipse_right}/>
@@ -43,7 +48,7 @@ const NewCategory = ({onChangeCategory, category, setAddNewCategory}) => (
                 value={category}
                 placeholder="New Category Name"
             />
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {insertNewCategory(category); setAddNewCategory(false); onChangeCategory("");}}>
                 <View style={styles.category_button}>
                     <Text style={styles.button_text}>ADD</Text>
                 </View>
@@ -57,9 +62,9 @@ const NewCategory = ({onChangeCategory, category, setAddNewCategory}) => (
 export default function Home({navigation}) {
     const [addNewCategory, setAddNewCategory] = React.useState(false)
     const [category, onChangeCategory] = React.useState(null);
-    const categories = [[1, "Movies", 0]];
-    const categoriesTest = database.getCategories();
-    console.log(categoriesTest);
+    const [categories, setCategories] = React.useState([]);
+    const database = DatabaseClass.getInstance();
+    database.getCategories();
 
     return (
         <SafeAreaView style={styles.container}>
@@ -94,7 +99,8 @@ export default function Home({navigation}) {
             <NewCategory
                 onChangeCategory={onChangeCategory}
                 category={category}
-                setAddNewCategory={setAddNewCategory}/>
+                setAddNewCategory={setAddNewCategory}
+                />
             </Modal>
             <View style={styles.footer_area}>
                 <TouchableOpacity onPress={() => setAddNewCategory(true)}>
