@@ -5,6 +5,8 @@ import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInpu
 import styles from '../Styles/styles.js';
 import DatabaseClass from '../Utilities/database';
 
+const database = new DatabaseClass();
+
 // Subview that shows the already made categories and how many notes are in those categories
 function NoteCategory(props) {
     const categories = props.categories;
@@ -62,8 +64,8 @@ const NewCategory = ({onChangeCategory, category, setAddNewCategory, insertNewCa
 export default function Home({navigation}) {
     const [addNewCategory, setAddNewCategory] = React.useState(false)
     const [category, onChangeCategory] = React.useState(null);
-    const [categories, setCategories] = React.useState([]);
-    const database = DatabaseClass.getInstance();
+    const categories = [[1, "Movies", 0]];
+
     database.getCategories();
 
     return (

@@ -38,23 +38,16 @@ db.transaction(tx => {
 });
 
 export default class DatabaseClass extends Component {
-
-  static instance = null;
-  static getInstance() {
-    if (this.instance == null) {
-      this.instance = new DatabaseClass();
-    }
-    return this.instance;
-  }
   constructor() {
     super();
     this.state = {
       categories: [],
     }
-  }
+  };
 
   componentWillMount() {
     this.SelectQuery = this.SelectQuery.bind(this);
+
   }
 
   ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
