@@ -40,38 +40,6 @@ db.transaction(tx => {
 export default class DatabaseClass extends Component {
   constructor() {
     super();
-    this.state = {
-      categories: [],
-    }
-  };
-
-  componentWillMount() {
-    this.SelectQuery = this.SelectQuery.bind(this);
-
-  }
-
-  ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
-    db.transaction((trans) => {
-      trans.executeSql(sql, params, (trans, results) => {
-        resolve(results);
-      },
-        (error) => {
-          reject(error);
-        });
-    });
-  });
-
-  async SelectQuery() {
-    let selectQuery = await this.ExecuteQuery("SELECT * FROM Categories",[]);
-    var rows = selectQuery.rows;
-    for (let i = 0; i < rows.length; i++) {
-      this.setState({categories: [...this.state.categories, rows.item(i)]});
-    }
-  }
-
-  getCategories() {
-    this.SelectQuery();
-    console.log(this.state.categories);
   }
 
   emptyState() {

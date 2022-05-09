@@ -1,23 +1,22 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInput } from 'react-native';
 import styles from '../Styles/styles.js';
 import DatabaseClass from '../Utilities/database';
-
-const database = new DatabaseClass();
+import * as SQLite from 'expo-sqlite';
 
 // Subview that shows the already made categories and how many notes are in those categories
 function NoteCategory(props) {
     const categories = props.categories;
     const listItems = categories.map((data) => 
-        <TouchableOpacity key={data[0]} onPress={ () => props.navigation.navigate("Notes", {category: data[1], page_id: data[0]})}>
+        <TouchableOpacity key={data["ID"]} onPress={ () => props.navigation.navigate("Notes", {category: data["Name"], page_id: data["ID"]})}>
             <View style={styles.notes_area}>
                 <View style={styles.title_area}>
-                    <Text style={styles.notes_title}>{data[1]}</Text>
+                    <Text style={styles.notes_title}>{data["Name"]}</Text>
                 </View>
                 <View style={styles.amount_area}>
-                    <Text style={styles.notes_amount}>{data[2]}</Text>
+                    <Text style={styles.notes_amount}>{data["Amount"]}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -62,11 +61,27 @@ const NewCategory = ({onChangeCategory, category, setAddNewCategory, insertNewCa
 // Main page that displayes all the note categories, allowes the user to add new categories, go into one off the
 // categories or change/inspect the settings
 export default function Home({navigation}) {
+    const initialState = {
+        categories: []
+    };
     const [addNewCategory, setAddNewCategory] = React.useState(false)
     const [category, onChangeCategory] = React.useState(null);
-    const categories = [[1, "Movies", 0]];
+    const [categories, setCategories] = React.useState(initialState);
+    const db = SQLite.openDatabase("mynotes.db");
+    const database = new DatabaseClass();
 
-    database.getCategories();
+    useEffect(() => {
+        setCategories({...initialState});
+        db.transaction(function(tx) {
+            tx.executeSql(`SELECT * FROM Categories;`, [], (tx, results) => {
+                for (var i = 0; i < results.rows.item.length; i++) {
+                    setCategories([...categories, results.rows.item(i)]);
+                }
+            });
+        });
+    }, []);
+
+
 
     return (
         <SafeAreaView style={styles.container}>
