@@ -1,17 +1,30 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
-import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInput } from 'react-native';
+import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInput, Alert } from 'react-native';
 import styles from '../Styles/styles.js';
 import DatabaseClass from '../Utilities/database';
 import * as SQLite from 'expo-sqlite';
+
+// Delete button to delete sertain category. Will be displayed when the user long presses
+// one of the category names.
+function DeleteButton() {
+    return (
+        <View style={styles.delete_button_background}>
+            <View style={styles.delete_button_line}/>
+        </View>
+    );
+}
 
 // Subview that shows the already made categories and how many notes are in those categories
 function NoteCategory(props) {
     const categories = props.categories;
     const listItems = categories.map((data) => 
-        <TouchableOpacity key={data["ID"]} onPress={ () => props.navigation.navigate("Notes", {category: data["Name"], page_id: data["ID"]})}>
+        <TouchableOpacity key={data["ID"]} 
+                          onPress={ () => props.navigation.navigate("Notes", {category: data["Name"], page_id: data["ID"]})}
+                          onLongPress={() => Alert.alert("Long press works!")}>
             <View style={styles.notes_area}>
+                {props.deleteCategory && (<DeleteButton/>)}
                 <View style={styles.title_area}>
                     <Text style={styles.notes_title}>{data["Name"]}</Text>
                 </View>
@@ -57,31 +70,34 @@ const NewCategory = ({onChangeCategory, category, setAddNewCategory, insertNewCa
         </View>
     </View>
 );
-
+ 
 // Main page that displayes all the note categories, allowes the user to add new categories, go into one off the
 // categories or change/inspect the settings
 export default function Home({navigation}) {
-    const initialState = {
-        categories: []
-    };
     const [addNewCategory, setAddNewCategory] = React.useState(false)
     const [category, onChangeCategory] = React.useState(null);
-    const [categories, setCategories] = React.useState(initialState);
+    const [categories, setCategories] = React.useState([]);
+    const [deleteCategory, setDeleteCategory] = React.useState(false);
     const db = SQLite.openDatabase("mynotes.db");
     const database = new DatabaseClass();
 
     useEffect(() => {
-        setCategories({...initialState});
         db.transaction(function(tx) {
             tx.executeSql(`SELECT * FROM Categories;`, [], (tx, results) => {
-                for (var i = 0; i < results.rows.item.length; i++) {
-                    setCategories([...categories, results.rows.item(i)]);
+                var temp = [];
+                for (var i = 0; i < results.rows.length; i++) {
+                    temp.push(results.rows.item(i));
                 }
+                setCategories(temp);
             });
         });
     }, []);
 
-
+    const insertNewCategory = (categoryName) => {
+        db.transaction(function(tx) {
+          tx.executeSql(`INSERT INTO Categories ("Name", "Amount") VALUES(?, 0)`, [categoryName], null);
+        })
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -101,11 +117,11 @@ export default function Home({navigation}) {
             </View>
             <View style={styles.main_area}>
                 <ScrollView>
-                    <NoteCategory categories={categories} navigation={navigation}/>
+                    <NoteCategory categories={categories} navigation={navigation} deleteCategory={deleteCategory}/>
                 </ScrollView>
             </View>
             <Modal
-            animationType='fade'
+            animationType='slide'
             transparent={true}
             visible={addNewCategory}
             onRequestClose={() => {
@@ -117,6 +133,7 @@ export default function Home({navigation}) {
                 onChangeCategory={onChangeCategory}
                 category={category}
                 setAddNewCategory={setAddNewCategory}
+                insertNewCategory={insertNewCategory}
                 />
             </Modal>
             <View style={styles.footer_area}>

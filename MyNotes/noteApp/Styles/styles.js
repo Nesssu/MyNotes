@@ -179,7 +179,9 @@ export default StyleSheet.create({
     settings_main: {
       flex: 8,
       width: "100%",
-      height: "100%"
+      height: "100%",
+      alignItems: "center",
+      justifyContent: "center",
     },
     back_to_home_button: {
       position: "absolute",
@@ -232,6 +234,20 @@ export default StyleSheet.create({
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5
+    },
+    delete_button_background: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      backgroundColor: 'red',
+    },
+    delete_button_line: {
+      width: "75%",
+      height: "12.5%",
+      backgroundColor: "white",
+      borderRadius: 5
     },
 
     // STYLING FOR ALL THE INPUTS

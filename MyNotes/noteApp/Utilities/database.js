@@ -42,10 +42,6 @@ export default class DatabaseClass extends Component {
     super();
   }
 
-  emptyState() {
-    this.setState({categories: []});
-  }
-
   insertNewCategory = (categoryName) => {
     db.transaction(function(tx) {
       tx.executeSql(`INSERT INTO Categories ("Name", "Amount") VALUES(?, 0)`, [categoryName], null);
