@@ -26,6 +26,8 @@ export default StyleSheet.create({
       borderRadius: 25,
       backgroundColor: '#ffefd9',
       alignItems: 'center',
+      textAlign: "center",
+      justifyContent: "center",
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -235,20 +237,6 @@ export default StyleSheet.create({
       shadowRadius: 4,
       elevation: 5
     },
-    delete_button_background: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: 30,
-      height: 30,
-      borderRadius: 15,
-      backgroundColor: 'red',
-    },
-    delete_button_line: {
-      width: "75%",
-      height: "12.5%",
-      backgroundColor: "white",
-      borderRadius: 5
-    },
 
     // STYLING FOR ALL THE INPUTS
     new_category_input: {
@@ -319,5 +307,11 @@ export default StyleSheet.create({
       position: "absolute",
       bottom: 8,
       left: 8
+    },
+    delete_warning: {
+      fontSize: 35,
+      fontWeight: '600',
+      color: text_color_1,
+      margin: 20
     }
 });

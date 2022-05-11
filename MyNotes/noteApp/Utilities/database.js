@@ -7,7 +7,7 @@ db.transaction(tx => {
     tx.executeSql(
         `CREATE TABLE IF NOT EXISTS "Categories" (
         "ID"	INTEGER NOT NULL UNIQUE,
-        "Name"	TEXT NOT NULL,
+        "Name"	TEXT NOT NULL UNIQUE,
         "Amount"	INTEGER,
         PRIMARY KEY("ID" AUTOINCREMENT)
         );

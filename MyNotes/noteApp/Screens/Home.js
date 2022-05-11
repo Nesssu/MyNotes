@@ -1,30 +1,40 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInput, Alert } from 'react-native';
 import styles from '../Styles/styles.js';
-import DatabaseClass from '../Utilities/database';
 import * as SQLite from 'expo-sqlite';
 
 // Delete button to delete sertain category. Will be displayed when the user long presses
 // one of the category names.
-function DeleteButton() {
-    return (
-        <View style={styles.delete_button_background}>
-            <View style={styles.delete_button_line}/>
+const DeleteCategory = (props) => (
+    <View style={styles.new_category_container}>
+        <View style={styles.category_modal}>
+            <View style={styles.category_close_button_position}>
+                <TouchableOpacity onPress={() => {props.setDeleteCategory(false);}}>
+                    <View style={styles.close_category_button}>
+                        <View style={styles.small_eclipse_left}/>
+                        <View style={styles.small_eclipse_right}/>
+                    </View>
+                </TouchableOpacity>
+            </View>
+            <Text style={styles.delete_warning}>Do you want to delete "{props.category}"</Text>
+            <TouchableOpacity onPress={() => {props.forceUpdate(); props.deleteNoteCategory(); props.setDeleteCategory(false);}}>
+                <View style={styles.category_button}>
+                    <Text style={styles.button_text}>DELETE</Text>
+                </View>
+            </TouchableOpacity>
         </View>
-    );
-}
+    </View>
+);
 
 // Subview that shows the already made categories and how many notes are in those categories
 function NoteCategory(props) {
     const categories = props.categories;
-    const listItems = categories.map((data) => 
+    const listItems = categories.map((data) =>
         <TouchableOpacity key={data["ID"]} 
                           onPress={ () => props.navigation.navigate("Notes", {category: data["Name"], page_id: data["ID"]})}
-                          onLongPress={() => Alert.alert("Long press works!")}>
+                          onLongPress={() => props.longPressFunc(data["Name"])}>
             <View style={styles.notes_area}>
-                {props.deleteCategory && (<DeleteButton/>)}
                 <View style={styles.title_area}>
                     <Text style={styles.notes_title}>{data["Name"]}</Text>
                 </View>
@@ -42,10 +52,10 @@ function NoteCategory(props) {
                                                             top: 200
                                                             }}>ADD NEW CATEGORIES</Text>}</View>
     );
-}
+};
 
 // Modal that allows the user to create a new category
-const NewCategory = ({onChangeCategory, category, setAddNewCategory, insertNewCategory}) => (
+const NewCategory = ({onChangeCategory, category, setAddNewCategory, insertNewCategory, forceUpdate}) => (
     <View style={styles.new_category_container}>
         <View style={styles.category_modal}>
             <View style={styles.category_close_button_position}>
@@ -62,7 +72,7 @@ const NewCategory = ({onChangeCategory, category, setAddNewCategory, insertNewCa
                 value={category}
                 placeholder="New Category Name"
             />
-            <TouchableOpacity onPress={() => {insertNewCategory(category); setAddNewCategory(false); onChangeCategory("");}}>
+            <TouchableOpacity onPress={() => {insertNewCategory(category); setAddNewCategory(false); onChangeCategory(""); forceUpdate();}}>
                 <View style={styles.category_button}>
                     <Text style={styles.button_text}>ADD</Text>
                 </View>
@@ -77,9 +87,10 @@ export default function Home({navigation}) {
     const [addNewCategory, setAddNewCategory] = React.useState(false)
     const [category, onChangeCategory] = React.useState(null);
     const [categories, setCategories] = React.useState([]);
+    const [value, setValue] = React.useState(0);
     const [deleteCategory, setDeleteCategory] = React.useState(false);
+    const [categoryToDelete, setCategoryToDelete] = React.useState("");
     const db = SQLite.openDatabase("mynotes.db");
-    const database = new DatabaseClass();
 
     useEffect(() => {
         db.transaction(function(tx) {
@@ -91,12 +102,23 @@ export default function Home({navigation}) {
                 setCategories(temp);
             });
         });
-    }, []);
+    }, [value]);
 
+    const forceUpdate = () => {setValue(value + 1);};
+    const longPressFunc = (toDelete) => {setDeleteCategory(true); setCategoryToDelete(toDelete)};
     const insertNewCategory = (categoryName) => {
+        if (categoryName == "") {
+            Alert.alert("The category title can't be empty");
+        } else {
+            db.transaction(function(tx) {
+            tx.executeSql(`INSERT INTO Categories ("Name", "Amount") VALUES(?, 0)`, [categoryName], null);
+            })
+        }
+    };
+    const deleteNoteCategory = () => {
         db.transaction(function(tx) {
-          tx.executeSql(`INSERT INTO Categories ("Name", "Amount") VALUES(?, 0)`, [categoryName], null);
-        })
+            tx.executeSql(`DELETE FROM Categories WHERE Name = ?`, [categoryToDelete], null);
+        });
     };
 
     return (
@@ -117,7 +139,7 @@ export default function Home({navigation}) {
             </View>
             <View style={styles.main_area}>
                 <ScrollView>
-                    <NoteCategory categories={categories} navigation={navigation} deleteCategory={deleteCategory}/>
+                    <NoteCategory categories={categories} navigation={navigation} deleteCategory={deleteCategory} longPressFunc={longPressFunc}/>
                 </ScrollView>
             </View>
             <Modal
@@ -134,6 +156,23 @@ export default function Home({navigation}) {
                 category={category}
                 setAddNewCategory={setAddNewCategory}
                 insertNewCategory={insertNewCategory}
+                forceUpdate={forceUpdate}
+                />
+            </Modal>
+            <Modal
+            animationType='slide'
+            transparent={true}
+            visible={deleteCategory}
+            onRequestClose={() => {
+                alert("Modal has been closed!");
+                setDeleteCategory(!deleteCategory);
+            }}
+            >
+            <DeleteCategory
+                setDeleteCategory={setDeleteCategory}
+                forceUpdate={forceUpdate}
+                category={categoryToDelete}
+                deleteNoteCategory={deleteNoteCategory}
                 />
             </Modal>
             <View style={styles.footer_area}>
