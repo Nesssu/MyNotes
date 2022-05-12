@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Text, View, SafeAreaView, TouchableOpacity, ScrollView, Modal, TextInput, Alert } from 'react-native';
 import styles from '../Styles/styles.js';
 import * as SQLite from 'expo-sqlite';
+import DatabaseClass from '../Utilities/database.js';
 
 // Delete button to delete sertain category. Will be displayed when the user long presses
 // one of the category names.
@@ -33,7 +34,7 @@ function NoteCategory(props) {
     const listItems = categories.map((data) =>
         <TouchableOpacity key={data["ID"]} 
                           onPress={ () => props.navigation.navigate("Notes", {category: data["Name"], page_id: data["ID"]})}
-                          onLongPress={() => props.longPressFunc(data["Name"])}>
+                          onLongPress={() => props.longPressFunc(data["Name"], data["ID"])}>
             <View style={styles.notes_area}>
                 <View style={styles.title_area}>
                     <Text style={styles.notes_title}>{data["Name"]}</Text>
@@ -90,9 +91,12 @@ export default function Home({navigation}) {
     const [value, setValue] = React.useState(0);
     const [deleteCategory, setDeleteCategory] = React.useState(false);
     const [categoryToDelete, setCategoryToDelete] = React.useState("");
+    const [categoryToDeleteID, setCategoryToDeleteID] = React.useState(null);
     const db = SQLite.openDatabase("mynotes.db");
+    const database = new DatabaseClass;
 
     useEffect(() => {
+        database.initializeDatabase();
         db.transaction(function(tx) {
             tx.executeSql(`SELECT * FROM Categories;`, [], (tx, results) => {
                 var temp = [];
@@ -105,19 +109,21 @@ export default function Home({navigation}) {
     }, [value]);
 
     const forceUpdate = () => {setValue(value + 1);};
-    const longPressFunc = (toDelete) => {setDeleteCategory(true); setCategoryToDelete(toDelete)};
+    const longPressFunc = (toDelete, toDeleteID) => {setDeleteCategory(true); setCategoryToDelete(toDelete); setCategoryToDeleteID(toDeleteID);};
     const insertNewCategory = (categoryName) => {
         if (categoryName == "") {
             Alert.alert("The category title can't be empty");
         } else {
             db.transaction(function(tx) {
-            tx.executeSql(`INSERT INTO Categories ("Name", "Amount") VALUES(?, 0)`, [categoryName], null);
-            })
-        }
+            tx.executeSql(`INSERT INTO Categories ("Name", "Amount") VALUES(?, 0)`, [categoryName], 
+                (tx, results) => {},
+                (tx, error) => {console.log("Could insert data to the database!");});
+            });
+        };
     };
     const deleteNoteCategory = () => {
         db.transaction(function(tx) {
-            tx.executeSql(`DELETE FROM Categories WHERE Name = ?`, [categoryToDelete], null);
+            tx.executeSql(`DELETE FROM Categories WHERE ID = ?`, [categoryToDeleteID], null);
         });
     };
 
