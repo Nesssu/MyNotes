@@ -222,7 +222,7 @@ export default StyleSheet.create({
       alignItems: "center"
     },
     note_background: {
-      width: "100%",
+      width: 325,
       padding: 15,
       paddingBottom: 30,
       margin: 7.5,
@@ -296,7 +296,7 @@ export default StyleSheet.create({
       color: text_color_1,
     },
     notes_text: {
-      fontSize: 25,
+      fontSize: 20,
       color: text_color_2,
       fontWeight: '600',
     },

@@ -4,10 +4,29 @@ import styles from "../Styles/styles";
 import * as SQLite from 'expo-sqlite';
 import DatabaseClass from "../Utilities/database";
 
+// Converts the date from the database to format '<day> of <month>, <year>.'
+function dateRearrange(date) {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let year = 0, month = 1, day = 2;
+    const timeArray = date.split("-");
+    let newDate = "";
+
+    if (timeArray[day] == "2") {
+        newDate += timeArray[day] + "nd";
+    } else if (timeArray[day] == "3") {
+        newDate += timeArray[day] + "rd";
+    } else {
+        newDate += timeArray[day] + "th";
+    }
+
+    newDate += " of " + months[parseInt(timeArray[month]) - 1] + ", " + timeArray[year] + ".";
+    return newDate;
+}
+
 const Note = (props) => (
     <View style={styles.note_background}>
         <Text style={styles.notes_text}>{props.note}</Text>
-        <Text style={styles.notes_date}>{props.time}</Text>
+        <Text style={styles.notes_date}>{dateRearrange(props.time)}</Text>
     </View>
 );
 
@@ -48,14 +67,19 @@ export default function Notes(props) {
 
     const deleteNote = (id) => {
         db.transaction(function(tx) {
-            tx.executeSql(`DELETE FROM Notes WHERE ID = ?`, [id], null);
+            tx.executeSql(`DELETE FROM Notes WHERE ID = ?;`, [id], null);
         });
     };
 
     const addNote = (fk_id, note) => {
         db.transaction(function(tx) {
-            tx.executeSql(`INSERT INTO Notes ("FK_ID", "Notes", "Time") VALUES (?, ?, DATETIME())`, [fk_id, note], null);
+            tx.executeSql(`INSERT INTO Notes ("FK_ID", "Note", "Time") VALUES (?, ?, DATE());`, [fk_id, note], null);
         });
+    };
+
+    const addNewNote = () => {
+        addNote(page_id, "");
+        forceUpdate();  
     };
 
     return (
@@ -77,7 +101,7 @@ export default function Notes(props) {
             </View>
             <View style={styles.notes_footer}>
                 <View style={styles.notes_add_button_area}>
-                    <TouchableOpacity onPress={forceUpdate}>
+                    <TouchableOpacity onPress={addNewNote}>
                         <Text style={styles.notes_add_button}>ADD</Text>
                     </TouchableOpacity>
                 </View>
