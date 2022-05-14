@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { TouchableOpacity, SafeAreaView, View, Text, ScrollView } from "react-native";
+import { TouchableOpacity, SafeAreaView, View, Text, ScrollView, TextInput, Touchable, TouchableHighlight, Alert } from "react-native";
 import styles from "../Styles/styles";
 import * as SQLite from 'expo-sqlite';
 import DatabaseClass from "../Utilities/database";
@@ -23,17 +23,13 @@ function dateRearrange(date) {
     return newDate;
 }
 
-const Note = (props) => (
-    <View style={styles.note_background}>
-        <Text style={styles.notes_text}>{props.note}</Text>
-        <Text style={styles.notes_date}>{dateRearrange(props.time)}</Text>
-    </View>
-);
-
 function AllNotes(props) {
     const notes = props.notes;
     const listItems = notes.map((data) => 
-        <Note key={data["ID"]} note={data["Note"]} time={data["Time"]} />
+        <View key={data["ID"]} style={styles.note_background}>
+            <TextInput style={styles.notes_text} multiline={true} value={data["Note"]} onChangeText={props.setNoteValue} onEndEditing={() => {props.updateNote(data["ID"])}}></TextInput>
+            <Text style={styles.notes_date}>{dateRearrange(data["Time"])}</Text>
+        </View>
     );
     return (
         <View>{listItems}</View>
@@ -42,6 +38,7 @@ function AllNotes(props) {
 
 export default function Notes(props) {
     const [notes, setNotes] = React.useState([]);
+    const [noteValue, setNoteValue] = React.useState("");
     const [value, setValue] = React.useState(0);
     const page_id = props.route.params.page_id;
     const db = SQLite.openDatabase("mynotes.db");
@@ -77,6 +74,12 @@ export default function Notes(props) {
         });
     };
 
+    const updateNote = (id) => {
+        db.transaction(function(tx) {
+            tx.executeSql(`UPDATE Notes SET Note = ? WHERE ID = ?;`, [noteValue, id], null);
+        });
+    };
+
     const addNewNote = () => {
         addNote(page_id, "");
         forceUpdate();  
@@ -96,7 +99,11 @@ export default function Notes(props) {
             </View>
             <View style={styles.notes_main}>
                 <ScrollView contentContainerStyle={{alignItems: "center"}} style={{width: "100%", height: "100%"}}>
-                    <AllNotes notes={notes}/>
+                    <AllNotes notes={notes}
+                              noteValue={noteValue}
+                              setNoteValue={setNoteValue}
+                              updateNote={updateNote}
+                              />
                 </ScrollView>
             </View>
             <View style={styles.notes_footer}>
