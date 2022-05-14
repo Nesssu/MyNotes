@@ -20,6 +20,7 @@ function dateRearrange(date) {
     }
 
     newDate += " of " + months[parseInt(timeArray[month]) - 1] + ", " + timeArray[year] + ".";
+    newDate = "Updated " + newDate;
     return newDate;
 }
 
@@ -50,6 +51,7 @@ export default function Notes(props) {
                 var temp = [];
                 for (var i = 0; i < results.rows.length; i++) {
                     temp.push(results.rows.item(i));
+                    console.log(results.rows.item(i));
                 }
                 setNotes(temp);
             }, (tx, error) => {

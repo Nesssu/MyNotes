@@ -33,23 +33,12 @@ export default class DatabaseClass extends Component {
     });
     db.transaction(tx => {
       tx.executeSql(
-          `CREATE TRIGGER IF NOT EXISTS Amount_trigger_insert
-          AFTER INSERT ON Notes
-          BEGIN
-            UPDATE Categories set Amount = (SELECT COUNT(*) FROM Notes WHERE FK_ID == NEW.FK_ID)
-            WHERE ID = NEW.FK_ID;
-          END;`, [], (tx, results) => {}, (tx, error) => {console.log("Couldn't create insert trigger: " + error);
-      });
-    });
-    db.transaction(tx => {
-      tx.executeSql(
-          `CREATE TRIGGER IF NOT EXISTS Amount_trigger_delete
-          AFTER DELETE ON Notes
-          BEGIN
-            UPDATE Categories set Amount = (SELECT COUNT(*) FROM Notes WHERE FK_ID == OLD.FK_ID)
-            WHERE ID = OLD.FK_ID;
-          END;`, [], (tx, results) => {}, (tx, error) => {console.log("Couldn't create delete trigger: " + error);
-      });
+          `CREATE TRIGGER IF NOT EXISTS update_time_trigger
+           AFTER UPDATE ON Notes
+           BEGIN
+            UPDATE Notes SET Time = DATE() WHERE ID = NEW.ID;
+           END;`, [], null
+        );
     });
   };
 
@@ -57,9 +46,16 @@ export default class DatabaseClass extends Component {
   deleteTables = () => {
     db.transaction(function(tx) {
       tx.executeSql(`DROP TABLE IF EXISTS Notes;
-                     DROP TABLE IF EXISTS Categories;`, [], (tx, results) => {console.log("Tables dropped");}, (tx, error) => {console.log("Could drop the tables!");});
+                     DROP TABLE IF EXISTS Categories;`, [], null);
     });
   };
+
+  deleteTriggers = () => {
+    db.transaction(function(tx) {
+      tx.executeSql(`DROP TRIGGER IF EXISTS Amount_trigger_insert;
+                     DROP TRIGGER IF EXISTS Amount_trigger_delete;`, [], null);
+    });
+  }
 
   insertNewCategory = (categoryName) => {
     db.transaction(function(tx) {
