@@ -39,9 +39,6 @@ function NoteCategory(props) {
                 <View style={styles.title_area}>
                     <Text style={styles.notes_title}>{data["Name"]}</Text>
                 </View>
-                <View style={styles.amount_area}>
-                    <Text style={styles.notes_amount}>{data["Amount"]}</Text>
-                </View>
             </View>
         </TouchableOpacity>
     );
@@ -96,11 +93,13 @@ export default function Home({navigation}) {
     const database = new DatabaseClass;
 
     useEffect(() => {
+
         database.initializeDatabase();
+
         db.transaction(function(tx) {
             tx.executeSql(`SELECT * FROM Categories;`, [], (tx, results) => {
-                var temp = [];
-                for (var i = 0; i < results.rows.length; i++) {
+                let temp = [];
+                for (let i = 0; i < results.rows.length; i++) {
                     temp.push(results.rows.item(i));
                 }
                 setCategories(temp);
@@ -115,11 +114,11 @@ export default function Home({navigation}) {
             Alert.alert("The category title can't be empty");
         } else {
             db.transaction(function(tx) {
-            tx.executeSql(`INSERT INTO Categories ("Name", "Amount") VALUES(?, 0)`, [categoryName], 
-                (tx, results) => {},
-                (tx, error) => {console.log("Could insert data to the database!");});
+            tx.executeSql(`INSERT INTO Categories (Name) VALUES(?)`, [categoryName], 
+                (tx, results) => {console.log("Data inserted!")},
+                (tx, error) => {console.log(error);});
             });
-        };
+        }
     };
     const deleteNoteCategory = () => {
         db.transaction(function(tx) {

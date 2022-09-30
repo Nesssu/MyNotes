@@ -11,22 +11,21 @@ export default class DatabaseClass extends Component {
   initializeDatabase = () => {
     db.transaction(tx => {
       tx.executeSql(
-          `CREATE TABLE IF NOT EXISTS "Categories" (
+          `CREATE TABLE IF NOT EXISTS Categories (
           "ID"	INTEGER NOT NULL UNIQUE,
           "Name"	TEXT NOT NULL UNIQUE,
-          "Amount"	INTEGER,
           PRIMARY KEY("ID" AUTOINCREMENT)
           );`, [],  (tx, results) => {}, (tx, error) => {console.log("Couldn't create Category table: " + error);
       });
     });
     db.transaction(tx => {
       tx.executeSql(
-          `CREATE TABLE IF NOT EXISTS "Notes" (
+          `CREATE TABLE IF NOT EXISTS Notes (
            "ID"	INTEGER NOT NULL UNIQUE,
            "FK_ID"	INTEGER NOT NULL,
            "Note"	TEXT,
            "Time"	TEXT NOT NULL,
-           FOREIGN KEY("FK_ID") REFERENCES "Categories"("ID") ON DELETE CASCADE,
+           FOREIGN KEY("FK_ID") REFERENCES Categories("ID") ON DELETE CASCADE,
            PRIMARY KEY("ID" AUTOINCREMENT)
            );`, [], (tx, results) => {}, (tx, error) => {console.log("Couldn't create Notes table: " + error);
       });

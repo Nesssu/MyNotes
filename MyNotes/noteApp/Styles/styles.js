@@ -191,13 +191,13 @@ export default StyleSheet.create({
       left: 20,
     },
     notes_header: {
-      flex: 2,
+      flex: 4,
       justifyContent: 'center',
       alignItems: 'center',
       width: "100%",
     },
     notes_main: {
-      flex: 7,
+      flex: 15,
       width: "100%",
       alignItems: "center",
     },
@@ -205,8 +205,16 @@ export default StyleSheet.create({
       flex: 1,
       width: "100%",
       flexDirection: "row",
-
     },
+    notes_input_area: {
+      height: "100%",
+      width: "100%",
+    },
+    separator: {
+      width: "90%",
+      height: 1,
+      backgroundColor: text_color_2
+    },  
     notes_add_button_area: {
       flex: 1,
       width: "100%",
@@ -252,6 +260,13 @@ export default StyleSheet.create({
       borderRadius: 20,
       borderWidth: 1,
       borderColor: background_color
+    },
+    notes_input: {
+      fontSize: 20,
+      color: text_color_1,
+      padding: 10,
+      width: "100%",
+      height: "100%",
     },
   
     // STYLING FOR ALL THE TEXTS
