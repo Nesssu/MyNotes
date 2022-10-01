@@ -13,6 +13,8 @@ export default StyleSheet.create({
       backgroundColor: background_color,
       alignItems: 'center',
       justifyContent: 'center',
+      width: "100%",
+      height: "100%"
     },
     new_category_container: {
       flex: 1,
@@ -62,11 +64,9 @@ export default StyleSheet.create({
     },
     notes_area: {
       flexDirection: "row",
-      margin: "3%",
-      justifyContent: 'space-between'
-    },
-    amount_area: {
-      marginLeft: "15%"
+      marginTop: "3%",
+      marginBottom: "3%",
+      width: "100%",
     },
     title_area: {
       marginRight: "15%"
@@ -79,6 +79,11 @@ export default StyleSheet.create({
     },
     main_area: {
       flex: 6,
+      width: "100%",
+      height: "100%",
+      paddingStart: 30,
+      paddingEnd: 30,
+      justifyContent: 'center',
     },
     footer_area: {
       flex: 2,
@@ -276,7 +281,7 @@ export default StyleSheet.create({
       fontWeight: '600'
     },
     notes_title: {
-      fontSize: 40,
+      fontSize: 35,
       fontWeight: '600',
       color: text_color_1,
     },

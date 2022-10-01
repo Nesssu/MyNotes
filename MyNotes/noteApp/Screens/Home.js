@@ -115,7 +115,7 @@ export default function Home({navigation}) {
         } else {
             db.transaction(function(tx) {
             tx.executeSql(`INSERT INTO Categories (Name) VALUES(?)`, [categoryName], 
-                (tx, results) => {console.log("Data inserted!")},
+                (tx, results) => {},
                 (tx, error) => {console.log(error);});
             });
         }
