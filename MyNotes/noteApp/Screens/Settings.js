@@ -27,7 +27,7 @@ export default function Settings({navigation}) {
             <View style={styles.settings_main}>
                 <TouchableOpacity onPress={() => {deleteCategories()}}>
                     <View>
-                        <Text style={{fontSize: 30, fontWeight: '600'}}>DELETE ALL CATEGORIES</Text>
+                        <Text style={{fontSize: 30, fontWeight: '600'}}>IF NOTHING USEFUL COMES TO MIND, DELETE</Text>
                     </View>
                 </TouchableOpacity>
             </View>

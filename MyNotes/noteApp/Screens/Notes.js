@@ -1,64 +1,133 @@
 import React, { useEffect } from "react";
-import { TouchableOpacity, SafeAreaView, View, Text, ScrollView, TextInput, Touchable, TouchableHighlight, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { TouchableOpacity, SafeAreaView, View, Text, ScrollView, TextInput, } from "react-native";
 import styles from "../Styles/styles";
 import * as SQLite from 'expo-sqlite';
-import DatabaseClass from "../Utilities/database";
 
 export default function Notes(props) {
-    const [note, setNote] = React.useState("");
+    const [notes, setNotes] = React.useState([]);
+    const [update, setUpdate] = React.useState(0);
+    const [showRemove, setShowRemove] = React.useState(false);
+
     const page_id = props.route.params.page_id;
     const db = SQLite.openDatabase("mynotes.db");
 
     useEffect(() => {
         db.transaction(function(tx) {
-            tx.executeSql(`SELECT Note FROM Notes WHERE FK_ID = ?;`, [page_id], (tx, results) => {
+            tx.executeSql(`SELECT Note, ID FROM Notes WHERE FK_ID = ?;`, [page_id], (tx, results) => {
                 if (results.rows.length == 0)
                 {
-                    setNote("");
+                    setNotes([]);
                 }
                 else {
-                    setNote(results.rows.item(0)["Note"]);
+                    let temp = [];
+                    for (let i = 0; i < results.rows.length; i++) {
+                        temp.push({Note: results.rows.item(i)["Note"], ID: results.rows.item(i)["ID"]});
+                    }
+                    setNotes(temp);
                 }
             }, (tx, error) => {
                 console.log(error);
             })
         })
-    }, []);
+    }, [update]);
 
+    const changeRemoveState = () => {
+        if (showRemove) {
+            setShowRemove(false);
+            document.documentElement.style.setProperty("notes_remove_circle", 0);
+        } else {
+            setShowRemove(true);
+            document.documentElement.style.setProperty("notes_remove_circle", 35);
+        }
+    }
 
-    const updateNote = () => {
+    const addNoteToDatabase = () => {
         db.transaction(function(tx) {
-            tx.executeSql(`SELECT * FROM Notes WHERE FK_ID = ?;`, [page_id], function (tx, res)
-            {
-                if (res.rows.length == 0)
-                {
-                    tx.executeSql(`INSERT INTO Notes (Note, FK_ID, Time) VALUES(?, ?, DATETIME())`, [note, page_id],
-                    (tx, results) => {console.log("Data inserted!")},
-                    (tx, error) => {console.log(error);});
+            tx.executeSql(`INSERT INTO Notes (FK_ID, Note, Time) VALUES (?, ?, DATETIME());`, [page_id, ""], (tx, res) => {
+                if (res.rowsAffected > 0) {
+                    console.log("Insert successful");
+                } else {
+                    console.log("Insert failed");
                 }
-                else {
-                    tx.executeSql(`UPDATE Notes SET Note = ? WHERE FK_ID = ?;`, [note, page_id], null);
+            })
+        });
+        setUpdate(update + 1);
+    }
+
+    const updateNotes = (i) => {
+        db.transaction(function(tx) {
+            tx.executeSql(`UPDATE Notes SET Note=? WHERE ID=?;`, [notes[i].Note, notes[i].ID], (tx, results) => {
+                if (results.rowsAffected > 0) {
+                    console.log("Update succesful")
+                } else {
+                    console.log("Update failed");
                 }
             })
         })
     };
 
-    const dateRearrange = (date) => {
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        let year = 0, month = 1, day = 2;
-        const timeArray = date.split("-");
-        let newDate = "Updated ";
-    
-        if (timeArray[day] == "2") {
-            newDate += timeArray[day] + "nd";
-        } else if (timeArray[day] == "3") {
-            newDate += timeArray[day] + "rd";
-        } else {
-            newDate += timeArray[day] + "th";
-        }
-    
-        newDate += " of " + months[parseInt(timeArray[month]) - 1] + ", " + timeArray[year] + ".";
-        return newDate;
+    const deleteNote = (i) => {
+        db.transaction(function(tx) {
+            tx.executeSql(`DELETE * FROM Notes WHERE ID=?;`, [notes[i].ID], (tx, res) => {
+                if (res.rowsAffected > 0) {
+                    console.log("Note deleted succesfully");
+                } else {
+                    console.log("Deleting failed");
+                }
+            })
+        })
+    }
+
+    const handleNoteChange = (text, index) => {
+        setNotes(notes => {
+            const newNotes = notes.map((item, j) => {
+                if (j == index) {
+                    return {Note: text, ID: item.ID};
+                } else {
+                    return {Note: item.Note, ID: item.ID};
+                }
+            });
+            return newNotes;
+        });
+
+        updateNotes(index);
+    };
+
+    const MyTextInput = (props) => {
+        const [currentValue, setCurrentValue] = React.useState(props.value.Note);
+        return (
+            <View>
+                <TextInput
+                    value={currentValue}
+                    onChangeText={(v) => setCurrentValue(v)}
+                    onEndEditing={() => handleNoteChange(currentValue, props.index)}
+                    multiline={true}
+                />
+            </View>
+        );
+    };
+
+    const NoteView = () => {
+        const listItems = notes.map((data, i) => {
+            return (
+                <View key={i} style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: "100%"}}>
+                    <View style={styles.note_background_area}>
+                        <View style={styles.note_background}>
+                            <MyTextInput 
+                                index={i}
+                                value={data}
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.notes_remove_button_area}>
+                        <View style={styles.notes_remove_circle}>
+                            <View style={{width: "70%", height: 4, borderRadius: 4, backgroundColor: "#FFFFFF"}}/>
+                        </View>
+                    </View>
+                </View>
+            )
+        });
+        return listItems;
     };
 
     return (
@@ -73,20 +142,22 @@ export default function Notes(props) {
                 </View>
                 <Text style={styles.headline_1}>{props.route.params.category}</Text>
             </View>
-            <View style={styles.separator} />
             <View style={styles.notes_main}>
-                <View style={styles.notes_input_area}>
-                    <TextInput
-                        style={styles.notes_input}
-                        onChangeText={setNote}
-                        value={note}
-                        multiline={true}
-                        onChange={updateNote}/>
-                </View>
+                <ScrollView style={styles.notes_scrollview}>
+                    <NoteView/>
+                </ScrollView>
             </View>
-            <View style={styles.separator} />
             <View style={styles.notes_footer}>
-
+                <View style={styles.notes_add_button_area}>
+                    <TouchableOpacity onPress={() => addNoteToDatabase()}>
+                        <Text style={styles.notes_add_button}>ADD</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.notes_delete_button_area}>
+                    <TouchableOpacity>
+                        <Text style={styles.notes_delete_button}>DELETE</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </SafeAreaView>
     );

@@ -196,19 +196,23 @@ export default StyleSheet.create({
       left: 20,
     },
     notes_header: {
-      flex: 4,
+      flex: 2,
       justifyContent: 'center',
       alignItems: 'center',
       width: "100%",
     },
     notes_main: {
-      flex: 15,
+      flex: 6,
       width: "100%",
+      padding: 10,
       alignItems: "center",
+      justifyContent: 'center'
     },
     notes_footer: {
-      flex: 1,
+      flex: 2,
       width: "100%",
+      justifyContent: 'center',
+      alignItems: 'center',
       flexDirection: "row",
     },
     notes_input_area: {
@@ -225,20 +229,22 @@ export default StyleSheet.create({
       width: "100%",
       height: "100%",
       justifyContent: "center",
-      alignItems: "center"
+      alignItems: "center",
+      display: 'flex'
     },
     notes_delete_button_area: {
       flex: 1,
       width: "100%",
       height: "100%",
       justifyContent: "center",
-      alignItems: "center"
+      alignItems: "center",
+      display: 'flex'
     },
     note_background: {
-      width: 325,
+      width: "100%",
       padding: 15,
-      paddingBottom: 30,
-      margin: 7.5,
+      marginTop: 5,
+      marginBottom: 5,
       backgroundColor: "#ffefd9",
       borderRadius: 15,
       shadowColor: "#000",
@@ -249,6 +255,30 @@ export default StyleSheet.create({
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5
+    },
+    notes_scrollview: {
+      display: 'flex',
+      width: "100%",
+    },
+    notes_remove_circle: {
+      width: 35,
+      height: 35,
+      borderRadius: 17.5,
+      backgroundColor: "#FF3131",
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    note_background_area: {
+      flex: 6,
+      paddingStart: 10,
+      paddingEnd: 10,
+      width: "100%"
+    },
+    note_remove_button_area: {
+      flex: 1,
+      paddingStart: 10,
+      paddingEnd: 10,
+      width: "100%"
     },
 
     // STYLING FOR ALL THE INPUTS
