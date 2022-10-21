@@ -47,7 +47,8 @@ function NoteCategory(props) {
                                                             fontWeight: '200',
                                                             color: "grey",
                                                             fontStyle: "italic",
-                                                            top: 200
+                                                            top: 200,
+                                                            width: "100%"
                                                             }}>ADD NEW CATEGORIES</Text>}</View>
     );
 };

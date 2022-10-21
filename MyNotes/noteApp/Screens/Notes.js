@@ -31,16 +31,6 @@ export default function Notes(props) {
         })
     }, [update]);
 
-    const changeRemoveState = () => {
-        if (showRemove) {
-            setShowRemove(false);
-            document.documentElement.style.setProperty("notes_remove_circle", 0);
-        } else {
-            setShowRemove(true);
-            document.documentElement.style.setProperty("notes_remove_circle", 35);
-        }
-    }
-
     const addNoteToDatabase = () => {
         db.transaction(function(tx) {
             tx.executeSql(`INSERT INTO Notes (FK_ID, Note, Time) VALUES (?, ?, DATETIME());`, [page_id, ""], (tx, res) => {
@@ -54,9 +44,9 @@ export default function Notes(props) {
         setUpdate(update + 1);
     }
 
-    const updateNotes = (i) => {
+    const updateNotes = (text, i) => {
         db.transaction(function(tx) {
-            tx.executeSql(`UPDATE Notes SET Note=? WHERE ID=?;`, [notes[i].Note, notes[i].ID], (tx, results) => {
+            tx.executeSql(`UPDATE Notes SET Note = ? WHERE ID = ?;`, [text, notes[i].ID], (tx, results) => {
                 if (results.rowsAffected > 0) {
                     console.log("Update succesful")
                 } else {
@@ -68,14 +58,15 @@ export default function Notes(props) {
 
     const deleteNote = (i) => {
         db.transaction(function(tx) {
-            tx.executeSql(`DELETE * FROM Notes WHERE ID=?;`, [notes[i].ID], (tx, res) => {
+            tx.executeSql(`DELETE FROM Notes WHERE ID = ?;`, [notes[i].ID], (tx, res) => {
                 if (res.rowsAffected > 0) {
                     console.log("Note deleted succesfully");
                 } else {
                     console.log("Deleting failed");
                 }
             })
-        })
+        });
+        setUpdate(update + 1);
     }
 
     const handleNoteChange = (text, index) => {
@@ -90,7 +81,7 @@ export default function Notes(props) {
             return newNotes;
         });
 
-        updateNotes(index);
+        updateNotes(text, index);
     };
 
     const MyTextInput = (props) => {
@@ -102,6 +93,7 @@ export default function Notes(props) {
                     onChangeText={(v) => setCurrentValue(v)}
                     onEndEditing={() => handleNoteChange(currentValue, props.index)}
                     multiline={true}
+                    style={styles.notes_input}
                 />
             </View>
         );
@@ -120,9 +112,11 @@ export default function Notes(props) {
                         </View>
                     </View>
                     <View style={styles.notes_remove_button_area}>
-                        <View style={styles.notes_remove_circle}>
-                            <View style={{width: "70%", height: 4, borderRadius: 4, backgroundColor: "#FFFFFF"}}/>
-                        </View>
+                        <TouchableOpacity onPress={() => deleteNote(i)}>
+                            <View style={showRemove ? styles.notes_remove_circle_show : styles.notes_remove_circle_hide}>
+                                <View style={{width: "70%", height: 4, borderRadius: 4, backgroundColor: "#FFFFFF"}}/>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
             )
@@ -154,8 +148,8 @@ export default function Notes(props) {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.notes_delete_button_area}>
-                    <TouchableOpacity>
-                        <Text style={styles.notes_delete_button}>DELETE</Text>
+                    <TouchableOpacity onPress={() => setShowRemove(!showRemove)}>
+                        <Text style={styles.notes_delete_button}>{showRemove ? "DONE" : "DELETE"}</Text>
                     </TouchableOpacity>
                 </View>
             </View>

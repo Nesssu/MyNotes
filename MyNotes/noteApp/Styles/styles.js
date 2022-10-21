@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 const background_color = "#fff8ed";
+const secondary_background_color = "#fff4e3";
 const text_color_1 = "#425c8a";
 const text_color_2 = "#9e414a";
 
@@ -84,6 +85,7 @@ export default StyleSheet.create({
       paddingStart: 30,
       paddingEnd: 30,
       justifyContent: 'center',
+      alignItems: 'center',
     },
     footer_area: {
       flex: 2,
@@ -242,10 +244,10 @@ export default StyleSheet.create({
     },
     note_background: {
       width: "100%",
-      padding: 15,
+      padding: 10,
       marginTop: 5,
       marginBottom: 5,
-      backgroundColor: "#ffefd9",
+      backgroundColor: secondary_background_color,
       borderRadius: 15,
       shadowColor: "#000",
       shadowOffset: {
@@ -260,10 +262,18 @@ export default StyleSheet.create({
       display: 'flex',
       width: "100%",
     },
-    notes_remove_circle: {
-      width: 35,
-      height: 35,
-      borderRadius: 17.5,
+    notes_remove_circle_show: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      backgroundColor: "#FF3131",
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    notes_remove_circle_hide: {
+      width: 0,
+      height: 30,
+      borderRadius: 15,
       backgroundColor: "#FF3131",
       justifyContent: 'center',
       alignItems: 'center'
@@ -297,11 +307,10 @@ export default StyleSheet.create({
       borderColor: background_color
     },
     notes_input: {
-      fontSize: 20,
+      fontSize: 18,
+      fontWeight: '500',
       color: text_color_1,
-      padding: 10,
       width: "100%",
-      height: "100%",
     },
   
     // STYLING FOR ALL THE TEXTS
